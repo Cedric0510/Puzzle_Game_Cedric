@@ -1,12 +1,11 @@
-import { Drawer } from "./Drawer";
-import { Game } from "./Game";
-import { Point } from "./Point";
-import { Shape } from "./Shape";
+import { Drawer } from "./Drawer.js";
+import { Game } from "./Game.js";
+import { Point } from "./Point.js";
+import { Shape } from "./Shape.js";
 
 console.log("Display.ts loaded");
 
 export class Display {
-
     protected drawer: Drawer;
 
     constructor(canvasId: string, width: number, height: number, scale: number) {

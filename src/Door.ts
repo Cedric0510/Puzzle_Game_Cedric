@@ -1,7 +1,7 @@
-import { Color } from "./Color";
-import { Point } from "./Point";
-import { Shape } from "./Shape";
-import { Walkable } from "./Walkable";
+import { Color } from "./Color.js";
+import { Point } from "./Point.js";
+import { Shape } from "./Shape.js";
+import { Walkable } from "./Walkable.js";
 
 export class Door extends Point implements Walkable {
 
@@ -36,5 +36,9 @@ export class Door extends Point implements Walkable {
             context.fillStyle = door.getColor().toString(); 
             context.fillRect(door.getX() * 20, door.getY() * 20, 20, 20); 
         });
+    }
+
+    public getColor(): Color {
+        return this.color;
     }
 }

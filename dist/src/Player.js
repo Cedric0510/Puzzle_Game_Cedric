@@ -1,19 +1,13 @@
-import { Color } from "./Color";
-import { Direction } from "./Direction";
-import { Point } from "./Point";
-import { Shape } from "./Shape";
-import { Wall } from "./Wall";
-import { Button } from "./Button";
-
+import { Direction } from "./Direction.js";
+import { Point } from "./Point.js";
+import { Shape } from "./Shape.js";
 export class Player extends Point {
-    constructor(x: number, y: number, color: Color, z_index: number = 3) {
+    constructor(x, y, color, z_index = 3) {
         super(x, y, Shape.CIRCLE, color, z_index);
     }
-
-    public move(direction: Direction, walls: Wall[], buttons: Button[]): void {
-        let newX = this.x;
-        let newY = this.y;
-
+    move(direction, walls, buttons) {
+        let newX = this.getX();
+        let newY = this.getY();
         switch (direction) {
             case Direction.UP:
                 newY -= 1;
@@ -25,14 +19,14 @@ export class Player extends Point {
                 newX -= 1;
                 break;
             case Direction.RIGHT:
-                newY += 1;
+                newX += 1; // Correction ici
+                break;
+            default:
                 break;
         }
-
         if (!walls.some(wall => wall.getX() === newX && wall.getY() === newY)) {
             this.setPos(newX, newY);
         }
-
         buttons.forEach(button => {
             if (this.isOn(button)) {
                 button.enableWalk();

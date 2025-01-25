@@ -1,7 +1,7 @@
-import { Color } from "./Color";
-import { Point } from "./Point";
-import { Shape } from "./Shape";
-import { Walkable } from "./Walkable";
+import { Color } from "./Color.js";
+import { Point } from "./Point.js";
+import { Shape } from "./Shape.js";
+import { Walkable } from "./Walkable.js";
 
 export class Wall extends Point implements Walkable {
 
