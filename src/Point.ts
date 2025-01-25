@@ -1,5 +1,5 @@
-import { Color } from "./Color";
-import { Shape } from "./Shape";
+import { Color } from "./Color.js";
+import { Shape } from "./Shape.js";
 
 export class Point {
     protected x: number;

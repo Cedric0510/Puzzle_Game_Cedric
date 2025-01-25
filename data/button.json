@@ -1,0 +1,10 @@
+{
+    "1": [
+      {"x": 2, "y": 2, "color": "YELLOW"},
+      {"x": 18, "y": 18, "color": "GREEN"}
+    ],
+    "2": [
+      {"x": 5, "y": 5, "color": "YELLOW"},
+      {"x": 15, "y": 15, "color": "GREEN"}
+    ]
+  }

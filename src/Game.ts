@@ -1,11 +1,11 @@
-import { Color } from "./Color";
-import { Direction } from "./Direction";
-import { Display } from "./Display";
-import { Player } from "./Player";
-import { Point } from "./Point";
-import { Button } from "./Button";
-import { Wall } from "./Wall";
-import { Door } from "./Door";
+import { Color } from "./Color.js";
+import { Direction } from "./Direction.js";
+import { Display } from "./Display.js";
+import { Player } from "./Player.js";
+import { Point } from "./Point.js";
+import { Button } from "./Button.js";
+import { Wall } from "./Wall.js";
+import { Door } from "./Door.js";
 
 console.log("Game.ts loaded");
 
@@ -31,9 +31,20 @@ export class Game {
 
         this.player1 = new Player(width / 2, height / 2, Color.RED);
         this.player2 = new Player(width / 2 + 1, height / 2, Color.BLUE);
+    }
 
-        this.loadLevel(this.level);
-        this.setupInput();
+    public async init(): Promise<void> {
+        console.log("=== Game Initialization Start ===");
+        await this.loadLevel(this.level);
+        console.log("Loaded objects:", {
+            walls: this.walls.length,
+            buttons: this.buttons.length,
+            doors: this.doors.length
+        });
+        console.log("Player 1 position:", {x: this.player1.getX(), y: this.player1.getY()});
+        console.log("Player 2 position:", {x: this.player2.getX(), y: this.player2.getY()});
+        console.log("=== Game Initialization Complete ===");
+        this._display.render(this.allObjects);
     }
 
     public getLvl(): number {
@@ -42,49 +53,66 @@ export class Game {
 
     public isWalkable(obj: Point): boolean {
         if (obj instanceof Wall && !obj.can_walk_on()) return false;
+        if (obj instanceof Door && !obj.can_walk_on()) return false;
         return true;
     }
 
     private async loadLevel(level: number): Promise<void> {
-        console.log(`Loading level ${level}`);
-        this.walls = await Wall.fetchWallPositions(level);
-        this.buttons = await Button.fetchButtonPositions(level);
-        this.doors = await Door.fetchDoorPositions(level);
-        console.log("Walls:", this.walls);
-        console.log("Buttons:", this.buttons);
-        console.log("Doors:", this.doors);
+        console.log(`Loading level ${level} data...`);
+        try {
+            const wallsPromise = Wall.fetchWallPositions(level);
+            const buttonsPromise = Button.fetchButtonPositions(level);
+            const doorsPromise = Door.fetchDoorPositions(level);
+
+            const [walls, buttons, doors] = await Promise.all([
+                wallsPromise,
+                buttonsPromise,
+                doorsPromise
+            ]);
+
+            this.walls = walls;
+            this.buttons = buttons;
+            this.doors = doors;
+
+            console.log("Level data loaded successfully");
+        } catch (error) {
+            console.error("Error loading level:", error);
+            throw error;
+        }
     }
 
-    private setupInput(): void {
+    public setupInput(): void {
+        console.log("Setting up input...");
         window.addEventListener('keydown', (event) => {
             if (!this._isOver) {
+                console.log(`Key pressed: ${event.key}`);
                 switch (event.key) {
                     case 'ArrowUp':
-                        this.player1.move(Direction.UP, this.walls, this.buttons);
+                        this.player1.move(Direction.UP, this.walls, this.buttons, this.doors);
                         break;
                     case 'ArrowDown':
-                        this.player1.move(Direction.DOWN, this.walls, this.buttons);
+                        this.player1.move(Direction.DOWN, this.walls, this.buttons, this.doors);
                         break;
                     case 'ArrowLeft':
-                        this.player1.move(Direction.LEFT, this.walls, this.buttons);
+                        this.player1.move(Direction.LEFT, this.walls, this.buttons, this.doors);
                         break;
                     case 'ArrowRight':
-                        this.player1.move(Direction.RIGHT, this.walls, this.buttons);
+                        this.player1.move(Direction.RIGHT, this.walls, this.buttons, this.doors);
                         break;
                     case 'w':
-                        this.player2.move(Direction.UP, this.walls, this.buttons);
+                        this.player2.move(Direction.UP, this.walls, this.buttons, this.doors);
                         break;
                     case 's':
-                        this.player2.move(Direction.DOWN, this.walls, this.buttons);
+                        this.player2.move(Direction.DOWN, this.walls, this.buttons, this.doors);
                         break;
                     case 'a':
-                        this.player2.move(Direction.LEFT, this.walls, this.buttons);
+                        this.player2.move(Direction.LEFT, this.walls, this.buttons, this.doors);
                         break;
                     case 'd':
-                        this.player2.move(Direction.RIGHT, this.walls, this.buttons);
+                        this.player2.move(Direction.RIGHT, this.walls, this.buttons, this.doors);
                         break;
                 }
-                console.log("Rendering objects");
+                console.log("Rendering objects after input");
                 this._display.render(this.allObjects);
                 if (this.checkWinCondition()) {
                     this._isOver = true;

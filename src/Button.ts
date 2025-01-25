@@ -1,7 +1,7 @@
-import { Color } from "./Color";
-import { Point } from "./Point";
-import { Shape } from "./Shape";
-import { Walkable } from "./Walkable";
+import { Color } from "./Color.js";
+import { Point } from "./Point.js";
+import { Shape } from "./Shape.js";
+import { Walkable } from "./Walkable.js";
 
 export class Button extends Point implements Walkable {
 
@@ -31,9 +31,19 @@ export class Button extends Point implements Walkable {
     }
 
     public static async fetchButtonPositions(level: number): Promise<Button[]> {
-        const response = await fetch(`../data/button.json`);
-        const data = await response.json();
-        return data[level].map((pos: any) => new Button(pos.x, pos.y));
+        try {
+            const response = await fetch('./data/button.json');
+            if (!response.ok) {
+                console.error('Failed to load button data:', response.statusText);
+                return [];
+            }
+            const data = await response.json();
+            console.log('Button data loaded:', data[level]);
+            return data[level].map((pos: any) => new Button(pos.x, pos.y));
+        } catch (error) {
+            console.error('Error fetching button positions:', error);
+            return [];
+        }
     }
 
     public static render(context: CanvasRenderingContext2D, buttons: Button[]): void {

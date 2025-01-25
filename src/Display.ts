@@ -1,7 +1,7 @@
-import { Drawer } from "./Drawer";
-import { Game } from "./Game";
-import { Point } from "./Point";
-import { Shape } from "./Shape";
+import { Drawer } from "./Drawer.js";
+import { Game } from "./Game.js";
+import { Point } from "./Point.js";
+import { Shape } from "./Shape.js";
 
 console.log("Display.ts loaded");
 
@@ -27,6 +27,7 @@ export class Display {
                 this.drawer.drawRectangle(obj.getX(), obj.getY(), obj.getColor());
                 break;
             default:
+                console.warn(`Unknown shape for object at (${obj.getX()}, ${obj.getY()})`);
                 break;
         }
 
@@ -55,6 +56,7 @@ export class Display {
 
     public render(objects: Point[]): void {
         this.drawer.clear();
+        console.log("Rendering all objects:", objects);
         objects.forEach(obj => {
             switch (obj.getShape()) {
                 case Shape.CIRCLE:
@@ -66,6 +68,7 @@ export class Display {
                     this.drawer.drawRectangle(obj.getX(), obj.getY(), obj.getColor());
                     break;
                 default:
+                    console.warn(`Unknown shape for object at (${obj.getX()}, ${obj.getY()})`);
                     break;
             }
         });
